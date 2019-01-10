@@ -12,13 +12,17 @@
             "path" : "pages/index/index",
             "style" : {
                 "navigationBarTitleText" : "首页",
-              "navigationStyle": "custom"
-            }
-        },
-        {
-            "path" : "pages/index/HM-search/HM-search",
-            "style" : {
-                "navigationBarTitleText" : "搜索"
+                "navigationStyle": "custom",
+                "enablePullDownRefresh":true, //开启下拉刷新
+                "h5": {
+                    "titleNView": {
+                        "titleText": "首页"
+                    },
+                    "pullToRefresh": {
+                        // color offset 两个配置项
+                        "offset": "60px"
+                    }
+                }
             }
         },
         {

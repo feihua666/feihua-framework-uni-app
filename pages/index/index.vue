@@ -25,7 +25,7 @@
 
         </uni-nav-bar>
         <!-- 使用非原生导航栏后需要在页面顶部占位 -->
-        <view style="height:80px;">...</view>
+        <view style="height:80px;"></view>
         <image class="logo" src="../../static/logo.png"></image>
 		<view>
             <text class="title">{{title}}</text>
@@ -62,7 +62,13 @@
                 }
             }
 		},
-		methods: {
+        onPullDownRefresh(){
+            console.log('refresh');
+            setTimeout(function () {
+                uni.stopPullDownRefresh();
+            }, 1000);
+        },
+        methods: {
 
             goSearch(){
                 uni.navigateTo({
