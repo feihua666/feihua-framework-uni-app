@@ -5,7 +5,7 @@
             <view class="uni-flex align-items-center justify-content-center height100  width100">
                 <view class="fh-search-view uni-flex align-items-center" @tap="goSearch">
                     <view class="uni-swiper-msg">
-                        <view class="uni-swiper-msg-icon">
+                        <view class="uni-swiper-msg-icon  uni-flex align-items-center">
                             <uni-icon type="search" size="22" color="#666666"></uni-icon>
                         </view>
                         <view v-if="keyword">{{keyword}}</view>
@@ -99,5 +99,8 @@
         flex-wrap:nowrap;
         margin:7px 0;
         line-height:30px;
+    }
+    swiper{
+        font-size: 16px;
     }
 </style>
