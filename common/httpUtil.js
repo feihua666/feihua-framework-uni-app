@@ -41,7 +41,7 @@ const request = function (url, data, success, fail,complete, header, method,chec
             } else {
                 //如果未登录
                 if(checkLogin && status == 401){
-
+                    uni.removeStorage({key:'store_userinfo'});
                     let  forceLogin = store.state.forcedLogin
                     if(forceLogin){
                         uni.reLaunch({
