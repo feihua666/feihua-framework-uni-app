@@ -10,11 +10,11 @@
                 <input type="password" v-model="form.password" placeholder="请输入密码"></input>
             </view>
         </view>
-        <view class="padding30">
+        <view class="fh-padding-30">
             <button type="primary" :loading="loginLoading" @tap="loginBtnClick">登录</button>
         </view>
 
-        <view class="uni-row uni-flex padding30 "  style="justify-content: center;">
+        <view class="uni-row uni-flex fh-padding-30 "  style="justify-content: center;">
             <navigator class="uni-link" url="/pages/regist/regist">注册账号</navigator>
             <text>|</text>
             <navigator class="uni-link" url="/pages/password/forget">忘记密码</navigator>

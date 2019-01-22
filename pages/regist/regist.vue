@@ -14,7 +14,7 @@
                 <input type="text" clearable v-model="form.email" placeholder="可登录或找回密码"></input>
             </view>
         </view>
-        <view class="padding30">
+        <view class="fh-padding-30">
             <button type="primary" :loading="registBtnLoading" @tap="register">注册</button>
         </view>
     </view>

@@ -1,16 +1,16 @@
 <template>
 	<view class="uni-flex uni-flex-item uni-column">
-		<view class="fh-search-view uni-flex width100 padding30 justify-content-space-between" >
+		<view class="fh-search-view uni-flex fh-width-100 fh-padding-30 fh-justify-content-space-between" >
 			<view style="width:80%;">
-				<input type="text" focus class="uni-input padding0"  placeholder="关键字" v-model="form.keyword" @confirm="doSearch"
+				<input type="text" focus class="uni-input fh-padding-0"  placeholder="关键字" v-model="form.keyword" @confirm="doSearch"
 					   placeholder-class="placeholder-class" confirm-type="search">
 			</view>
 			<view style="width:15%;" class="uni-link" @tap="doSearch">{{action == 's' ? '搜索':'取消'}}</view>
 
 		</view>
-		<view class="height100">
+		<view class="fh-height-100">
 			<view v-if="oldKeywordList.length>0">
-				<view class="uni-flex justify-content-space-between padding30">
+				<view class="uni-flex fh-justify-content-space-between fh-padding-30">
 					<text>历史搜索</text>
 					<view>
 						<uni-icon type="trash" @tap="oldDelete"></uni-icon>

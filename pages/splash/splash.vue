@@ -1,13 +1,13 @@
 <template>
-	<swiper class="swiper height100" :indicator-dots="indicatorDots" @change="change" :autoplay="autoplay" :interval="interval" :duration="duration">sssss
+	<swiper class="swiper fh-height-100" :indicator-dots="indicatorDots" @change="change" :autoplay="autoplay" :interval="interval" :duration="duration">sssss
 		<swiper-item>
-			<view class="swiper-item uni-bg-red height100">A</view>
+			<view class="swiper-item uni-bg-red fh-height-100">A</view>
 		</swiper-item>
 		<swiper-item>
-			<view class="swiper-item uni-bg-green height100">B</view>
+			<view class="swiper-item uni-bg-green fh-height-100">B</view>
 		</swiper-item>
 		<swiper-item>
-			<view class="swiper-item uni-bg-blue height100">
+			<view class="swiper-item uni-bg-blue fh-height-100">
 				<text class="uni-link" style="margin-bottom: 200upx" @tap="goIndex">立即体验</text>
 			</view>
 		</swiper-item>

@@ -1,11 +1,11 @@
 <template>
-	<view class="width100">
+	<view class="fh-width-100">
         <!-- 固定在顶部的导航栏 -->
         <uni-nav-bar fixed="true" :left-container="false" :right-container="false">
-            <view class="uni-flex align-items-center justify-content-center height100  width100">
-                <view class="fh-search-view uni-flex align-items-center" @tap="goSearch">
+            <view class="uni-flex fh-align-items-center fh-justify-content-center fh-height-100  fh-width-100">
+                <view class="fh-search-view uni-flex fh-align-items-center" @tap="goSearch">
                     <view class="uni-swiper-msg">
-                        <view class="uni-swiper-msg-icon  uni-flex align-items-center">
+                        <view class="uni-swiper-msg-icon  uni-flex fh-align-items-center">
                             <uni-icon type="search" size="22" color="#666666"></uni-icon>
                         </view>
                         <view v-if="keyword">{{keyword}}</view>

@@ -10,7 +10,7 @@
                         <view class="uni-media-list-logo">
                             <image v-if="userinfo.photo" :src="$config.file.getDownloadUrl(userinfo.photo)"></image>
                         </view>
-                        <view class="uni-media-list-body justify-content-center">
+                        <view class="uni-media-list-body fh-justify-content-center">
                             <view class="uni-media-list-text-top">头像</view>
                         </view>
                 </view>
@@ -26,7 +26,7 @@
             </view>
 
         </view>
-        <view class="padding30">
+        <view class="fh-padding-30">
             <button v-if="hasLogin" type="default" @tap="logoutBtnClick">退出登录</button>
         </view>
     </view>

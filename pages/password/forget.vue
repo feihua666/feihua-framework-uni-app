@@ -18,7 +18,7 @@
             </view>
         </view>
 
-        <view class="padding30">
+        <view class="fh-padding-30">
             <button type="primary" class="primary" :loading="findLoading" @tap="findPassword">提交</button>
         </view>
     </view>

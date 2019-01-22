@@ -45,25 +45,49 @@
     /* #endif */
 
 
-    .padding30{
+    .fh-padding-30{
         padding:30upx;
     }
-    .padding0{
+    .fh-padding-right-30{
+        padding-right:30upx;
+    }
+    .fh-padding-left-30{
+        padding-left:30upx;
+    }
+    .fh-padding-top-30{
+        padding-top:30upx;
+    }
+    .fh-padding-bottom-30{
+        padding-bottom:30upx;
+    }
+    .fh-margin-right-30{
+        margin-right:30upx;
+    }
+    .fh-margin-left-30{
+        margin-left:30upx;
+    }
+    .fh-margin-top-30{
+        margin-top:30upx;
+    }
+    .fh-margin-bottom-30{
+        margin-bottom:30upx;
+    }
+    .fh-padding-0{
         padding:0;
     }
-    .justify-content-center{
+    .fh-justify-content-center{
         justify-content: center;
     }
-    .align-items-center{
+    .fh-align-items-center{
         align-items: center;
     }
-    .justify-content-space-between{
+    .fh-justify-content-space-between{
         justify-content:space-between;
     }
-    .height100{
+    .fh-height-100{
         height: 100%;
     }
-    .width100{
+    .fh-width-100{
         width: 100%;
     }
     button[size=mini][loading]:before{
