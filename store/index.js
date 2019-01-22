@@ -13,7 +13,7 @@ const store = new Vuex.Store({
         forcedLogin: true,
         hasLogin: false,
         userinfo: null,
-        dicts: [],
+        dicts: {},
         regs:null
     },
     mutations: {
