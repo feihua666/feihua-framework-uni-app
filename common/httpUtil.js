@@ -33,6 +33,7 @@ const request = function (url, data, success, fail,complete, header, method,chec
         method: method,
         success: function (res) {
             let status = res.statusCode
+            let code = res.data.code
             if (status >= 200 && status < 300) {
                 if (success && typeof success == 'function') {
                     success(res)
@@ -65,6 +66,22 @@ const request = function (url, data, success, fail,complete, header, method,chec
                         });
                     }
                     return;
+                }
+                if(status == 403){
+
+                    if(code == 'E403_100002'){
+                        //操作太频繁
+                        uni.showToast({
+                            icon: 'none',
+                            title: '您的手速不要太快!'
+                        });
+                    } else if(code == 'E403_100001'){
+                        //权限不足，没有接口请求权限
+                        uni.showToast({
+                            icon: 'none',
+                            title: '权限不足'
+                        });
+                    }
                 }
                 if (fail && typeof fail == 'function') {
                     fail(res)

@@ -22,10 +22,10 @@
 			};
 		},
 		methods:{
-            // options.pullDownRefresh = true 是下拉刷新，否则为卡拉触底加载更多
+            // options.pullDownRefresh = true 是下拉刷新，否则为上拉触底加载更多
             loadData(url,options){
                 let self = this
-                if (self.loadMore.loadingType !== 0) {
+                if (self.loadMore.loadingType !== 0 && options.pullDownRefresh != true) {
                     return;
                 }
                 self.loadMore.loadingType = 1;
