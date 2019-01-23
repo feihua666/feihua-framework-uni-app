@@ -36,6 +36,21 @@ export default {
         uni.reLaunch({
             url:url
         })
+    },
+    // urls为图片url，如果为 字符串类型，只接收一个参数，如果为数组，可指定第二个参数
+    pi(urls,url){
+        let param = {
+        }
+        if(typeof urls == 'string'){
+            param.urls = [urls]
+        }else{
+            param.urls = urls
+            if(url){
+                param.current = url
+            }
+        }
+
+        uni.previewImage(param)
     }
 
 
