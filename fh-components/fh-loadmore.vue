@@ -12,12 +12,15 @@
             uniLoadMore
         },
 		props:{
-            success: null
 		},
 		data() {
 			return {
                 loadMore:{
                     loadingType:0
+                },
+                page:{
+                    pageNo:1,
+                    pageSize:10
                 }
 			};
 		},
@@ -25,19 +28,31 @@
             // options.pullDownRefresh = true 是下拉刷新，否则为上拉触底加载更多
             loadData(url,options){
                 let self = this
-                if (self.loadMore.loadingType !== 0 && options.pullDownRefresh != true) {
-                    return;
+                if(options.pullDownRefresh == true){
+                    self.page.pageNo =1
+                }else {
+                    if (self.loadMore.loadingType !== 0) {
+                        return;
+                    }
+                    self.page.pageNo =  self.page.pageNo + 1
                 }
+
                 self.loadMore.loadingType = 1;
                 let requestPage = {
-                    pageNo:options.data.pageNo
+                    pageNo:self.page.pageNo
 				}
 				let responsePage = {
                     pageNum: 0
                 }
 
+                let _data = options.data
+                if(!_data){
+                    _data = {}
+                }
+                _data.pageNo = self.page.pageNo
+                _data.pageSize = self.page.pageSize
 				self.$http.get(url,{
-				    data:options.data,
+				    data:_data,
 					success:function (res) {
 				        responsePage.pageNum = res.data.data.page.pageNum
 						if(options.success && typeof options.success == 'function'){

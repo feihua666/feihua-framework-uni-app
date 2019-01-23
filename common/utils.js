@@ -13,6 +13,7 @@ export default {
         // #endif
         // #ifdef H5
         let input = document.createElement("input");
+        input.readOnly = "readOnly"
         input.value = message;
         document.body.appendChild(input);
         input.select();
@@ -25,6 +26,17 @@ export default {
         });
 
         // #endif
+    },
+    ngt(url){
+        uni.navigateTo({
+            url: url
+        });
+    },
+    ngr(url){
+        uni.reLaunch({
+            url:url
+        })
     }
+
 
 }
