@@ -38,7 +38,7 @@ export default {
         return r.join(',')
     },
     // 获取字典数组
-    getDictByType(){
+    getDictByType(type){
         let storeDicts = store.state.dicts
         return storeDicts[type]
     }

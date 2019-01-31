@@ -61,6 +61,11 @@
                     });
                 }
             }
+            this.$bus._$emit('indexSearch',this.form)
+            this.$bus.$off('indexSearch')
+            this.$bus.$on('indexSearch',function (data) {
+                this.doSearch(data)
+            })
 		},
         onPullDownRefresh(){
             console.log('refresh');
@@ -70,6 +75,9 @@
         },
         methods: {
 
+            doSearch(data){
+                this.keyword = data.keyword
+            },
             goSearch(){
                 uni.navigateTo({
                     url: '/pages/search/search?searchType=index&keyword=' + this.keyword

@@ -12,7 +12,8 @@ export default {
         })
         // #endif
         // #ifdef H5
-        let input = document.createElement("input");
+        // 多年以\n分隔
+        let input = document.createElement("textarea");
         input.readOnly = "readOnly"
         input.value = message;
         document.body.appendChild(input);
@@ -38,7 +39,7 @@ export default {
         })
     },
     // urls为图片url，如果为 字符串类型，只接收一个参数，如果为数组，可指定第二个参数
-    pi(urls,url){
+    pvi(urls,url){
         let param = {
         }
         if(typeof urls == 'string'){

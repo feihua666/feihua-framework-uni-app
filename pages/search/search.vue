@@ -5,7 +5,7 @@
 				<input type="text" focus class="uni-input fh-padding-0"  placeholder="关键字" v-model="form.keyword" @confirm="doSearch"
 					   placeholder-class="placeholder-class" confirm-type="search">
 			</view>
-			<view style="width:15%;" class="uni-link" @tap="doSearch">{{action == 's' ? '搜索':'取消'}}</view>
+			<view style="width:15%;" class="uni-link" @tap="doSearch">{{form.keyword != option.keyword ? '搜索':'取消'}}</view>
 
 		</view>
 		<view class="fh-height-100">
@@ -29,7 +29,6 @@
 
 <script>
     import uniTag from '@/components/uni-tag.vue'
-    import uniIcon from '@/components/uni-icon.vue'
     import UniIcon from "../../components/uni-icon";
 
     export default {
@@ -38,23 +37,12 @@
             uniTag
         },
 	    computed:{
-	      action(){
-	          if(this.form.keyword != null && this.form.keyword.length  > 0 || this.initKeyword != this.form.keyword){
-	              return 's'
-			  }
-	          return 'c'
-		  }
 		},
 		data() {
 			return {
 				form:{
-				    //标识是否执行搜索，如果未改变搜索条件为false
-				    isSearch:false,
-					searchType:'',
-					storeMutation:'setSearch',
                     keyword:''
 				},
-				initKeyword:'',
                 oldKeywordList:[],
 				//上个页面的参数
 				option:null
@@ -64,27 +52,21 @@
 
 	        this.option = option
 	        this.form.keyword = option.keyword
-	        this.initKeyword = option.keyword
 			this.form.isSearch = false
-			this.form.searchType = option.searchType
-			if(option.storeMutation){
-                this.form.storeMutation = option.storeMutation
-            }
 
             this.loadOldKeyword();
         },
 		methods:{
 	        doSearch(){
-	            let data = this.form
-                if(this.action == 's'){
-                    this.form.isSearch = true
-					this.$store.commit(this.form.storeMutation,this.form);
+	            // 执行
+                if(this.form.keyword != this.option.keyword){
                     this.saveKeyword(this.form.keyword)
+                    this.$bus._$emit('indexSearch',this.form)
                     uni.navigateBack({
                         delta: 1
 					})
                 }else{
-                    this.$store.commit(this.form.storeMutation,this.form);
+                    // 取消
                     uni.navigateBack({
                         delta: 1
                     })

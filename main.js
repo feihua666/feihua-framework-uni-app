@@ -11,6 +11,7 @@ Vue.prototype.$store = store
 Vue.prototype.$http = http
 Vue.prototype.$config = config
 Vue.prototype.$dictUtils = dictUtils
+Vue.prototype.$bus= Vue.prototype.$bus ||  new Vue()   //注册一个全局的总线组件
 
 App.mpType = 'app'
 

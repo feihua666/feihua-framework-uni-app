@@ -90,6 +90,9 @@
     .fh-width-100{
         width: 100%;
     }
+    .fh-text-align-right{
+        text-align: right;
+    }
     button[size=mini][loading]:before{
         width:25upx !important;
         height:25upx !important;

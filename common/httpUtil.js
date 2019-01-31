@@ -197,16 +197,15 @@ const _delete = function (url, options) {
 }
 const _uploadFile = function(url,options){
     let _url = url
-    if (_url.indexOf('http') !== 0) {
-        _url = app.globalData.config.host + url
-    }
-    let header = {
-        "accept": "application/json",
-        cookie : wx.getStorageSync(app.globalData.config.cookieKey)//读取cookie
+    if (!_url) {
+        _url = config.file.uploadUrl
     }
     let checkLogin = options.checkLogin
     if(checkLogin !== false){
         checkLogin = true
+    }
+    let header = {
+        "accept": "application/json"
     }
     uni.uploadFile({
         url: _url, 
@@ -224,6 +223,7 @@ const _uploadFile = function(url,options){
             } else {
                 //如果未登录
                 if(checkLogin && status == 401){
+                    uni.removeStorage({key:'store_userinfo'});
                     let  forceLogin = store.state.forcedLogin
                     if(forceLogin){
                         uni.reLaunch({
