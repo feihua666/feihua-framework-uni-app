@@ -123,7 +123,7 @@
         },
         watch:{
             hasLogin(hasLogin){
-                if(hasLogin && this.loginSuccess){
+                if(hasLogin/* && this.loginSuccess*/){
                     this.navigateBack()
                 }
             }

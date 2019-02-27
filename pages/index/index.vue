@@ -44,7 +44,7 @@
             uniNavBar,
             uniIcon
         },
-        computed: mapState(['forcedLogin', 'hasLogin','userinfo','search']),
+        computed: mapState(['forcedLogin', 'hasLogin','userinfo']),
 		data() {
 			return {
 			    keyword:'',
@@ -61,12 +61,24 @@
                     });
                 }
             }
-            this.$bus._$emit('indexSearch',this.form)
+            let self = this
             this.$bus.$off('indexSearch')
             this.$bus.$on('indexSearch',function (data) {
-                this.doSearch(data)
+                self.doSearch(data)
             })
 		},
+        onReady() {
+            console.log('onReady index')
+            if (!this.hasLogin) {
+                /* if(this.forcedLogin){
+                     uni.navigateTo({
+                         url: '/pages/login/login'
+                     });
+                 }*/
+            }else{
+                // 初始化数据
+            }
+        },
         onPullDownRefresh(){
             console.log('refresh');
             setTimeout(function () {

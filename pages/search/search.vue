@@ -61,7 +61,7 @@
 	            // 执行
                 if(this.form.keyword != this.option.keyword){
                     this.saveKeyword(this.form.keyword)
-                    this.$bus._$emit('indexSearch',this.form)
+                    this.$bus.$emit('indexSearch',this.form)
                     uni.navigateBack({
                         delta: 1
 					})
