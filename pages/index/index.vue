@@ -44,7 +44,7 @@
             uniNavBar,
             uniIcon
         },
-        computed: mapState(['forcedLogin', 'hasLogin','userinfo']),
+        computed: mapState(['hasLogin','userinfo']),
 		data() {
 			return {
 			    keyword:'',
@@ -53,31 +53,10 @@
 		},
 		onLoad() {
             console.log('onLoad index')
-            console.log(this.hasLogin);
-            if (!this.hasLogin) {
-                if(this.forcedLogin){
-                    uni.navigateTo({
-                        url: '/pages/login/login'
-                    });
-                }
-            }
-            let self = this
-            this.$bus.$off('indexSearch')
-            this.$bus.$on('indexSearch',function (data) {
-                self.doSearch(data)
-            })
+            this.pageLogical()
 		},
         onReady() {
             console.log('onReady index')
-            if (!this.hasLogin) {
-                /* if(this.forcedLogin){
-                     uni.navigateTo({
-                         url: '/pages/login/login'
-                     });
-                 }*/
-            }else{
-                // 初始化数据
-            }
         },
         onPullDownRefresh(){
             console.log('refresh');
@@ -87,22 +66,61 @@
         },
         methods: {
 
-            doSearch(data){
-                this.keyword = data.keyword
-            },
+            // 以下是搜索相关 ***************************
+            // 跳转到搜索页面
             goSearch(){
+                let self = this
+                this.$bus.$off('indexSearch')
+                this.$bus.$on('indexSearch',function (data) {
+                    self.doSearch(data)
+                })
                 uni.navigateTo({
                     url: '/pages/search/search?searchType=index&keyword=' + this.keyword
                 });
-            }
-		},
-        watch:{
-            search (search){
-                if(search.isSearch && 'index' == search.searchType){
-                    console.log(search)
+            },
+            doSearch(data){
+                this.keyword = data.keyword
+                // 执行搜索
+                console.log(data)
+            },
+
+            // 以下是页面跳转相关逻辑 ***************************
+            pageLogical(){
+                let splashShowed = uni.getStorageSync('splashShowed')
+                // 先判断引导页是否需要展示，如果需要展示，展示引导页
+                if(!splashShowed){
+                    uni.reLaunch({
+                        url:'/pages/splash/splash'
+                    })
+                }else{
+                    if (!this.hasLogin) {
+                        if(this.$config.forcedLogin){
+                            uni.reLaunch({
+                                url: '/pages/login/login'
+                            });
+                        }else{
+                            uni.showModal({
+                                title: '未登录',
+                                content: '您未登录，需要登录后才能继续享受更多服务',
+                                /**
+                                 * 如果需要强制登录，不显示取消按钮
+                                 */
+                                showCancel: true,
+                                success: (res) => {
+                                    if (res.confirm) {
+                                        uni.navigateTo({
+                                            url: '/pages/login/login'
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
                 }
-                this.keyword = search.keyword
             }
+        },
+        watch:{
+
         }
 	}
 </script>

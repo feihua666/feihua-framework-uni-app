@@ -56,11 +56,12 @@
     "h5" : {
         "router" : {
             "mode" : "hash",
-            "base" : "/h5/"
+            "base" : "/uni-app/"
         },
         "devServer" : {
-            "port" : 8383,
-            "disableHostCheck" : true
+            "port" : 8384,
+            "disableHostCheck" : true,
+            "https" : false
         }
     }
 }

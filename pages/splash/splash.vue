@@ -15,12 +15,7 @@
 </template>
 
 <script>
-    import {
-        mapState,
-        mapMutations
-    } from 'vuex'
 	export default {
-        computed: mapState(['splash']),
 		data() {
 			return {
                 indicatorDots: false,
@@ -30,9 +25,7 @@
 			};
 		},
 		methods:{
-            ...mapMutations(['setSplash']),
 			goIndex(){
-                this.setSplash(false)
 				uni.setStorageSync('splashShowed',true)
                 uni.reLaunch({
                     url:'/pages/index/index'
@@ -43,16 +36,6 @@
 		},
 		onLoad(){
             console.log('onLoad splash')
-            let splashShowed = uni.getStorageSync('splashShowed')
-			if(splashShowed){
-                this.setSplash(false)
-			}
-		    let showSplash = this.splash
-			if(!showSplash){
-                uni.reLaunch({
-                    url:'/pages/index/index'
-                })
-			}
 		}
 	}
 </script>

@@ -14,10 +14,13 @@
             <button type="primary" :loading="loginLoading" @tap="loginBtnClick">登录</button>
         </view>
 
-        <view class="uni-row uni-flex fh-padding-30 "  style="justify-content: center;">
+        <view class="uni-row uni-flex fh-padding-30 fh-justify-content-center">
             <navigator class="uni-link" url="/pages/regist/regist">注册账号</navigator>
             <text>|</text>
             <navigator class="uni-link" url="/pages/password/forget">忘记密码</navigator>
+        </view>
+        <view class="uni-row uni-flex fh-padding-30 fh-justify-content-center">
+            <button type="primary" size="mini" @tap="wxLoginBtnClick">微信直接登录</button>
         </view>
     </view>
 </template>
@@ -36,7 +39,6 @@
             return {
                 positionTop: 0,
                 loginLoading:false,
-                loginSuccess:false,
 				form: {
 				  loginType: 'ACCOUNT',
 				  loginClient: 'h5',
@@ -44,16 +46,22 @@
 				  password: '',
 				  captcha: '',
 				  rememberMe: false
-				}
+				},
+                wxLoginForm:{
+                    loginType: 'WX_PLATFORM',
+                    loginClient: 'h5',
+                    type:'yangwei',
+                    rememberMe: false
+                },
             }
         },
         // 点击导航返回和接口调用navigateBack都回调，注意getCurrentPages 长度为1时（只有当前页面）不回调
         onBackPress() {
-            if (!this.hasLogin && this.forcedLogin) {
+            if (!this.hasLogin && this.$config.forcedLogin) {
                 return true;
             }
         },
-        computed: mapState(['hasLogin','forcedLogin']),
+        computed: mapState(['hasLogin']),
         methods: {
             ...mapMutations(['setGlobalDataInit']),
             loginBtnClick() {
@@ -66,19 +74,8 @@
 					data:this.form,
                     checkLogin:false,
 					success: async function (infoRes) {
-                        // 获取当前登录用户信息,在app.vue中也有重复获取用户
-
-                        self.$http.initGobalData(true)
-
-                        uni.showToast({
-                            title: '登录成功',
-                            icon: 'none',
-                            duration:1000
-                        });
-                        self.loginSuccess = true
-
                         self.loginLoading = false
-
+                        self.loginSuccess()
                     },
 					fail:function(res){
 						let statusCode = res.statusCode;
@@ -90,17 +87,71 @@
 						}else if(statusCode == 400){
 							// 需要验证码,后台禁用
 							if(res.data.data.code == 'E400_100005'){
-								
+
 							}
 						}
                         self.loginLoading = false
 					}
 				})
             },
+            wxLoginAuto(){
+                let self = this
+                this.$http.post('/login',{
+                    data:this.wxLoginForm,
+                    checkLogin:false,
+                    success: function (infoRes) {
+                        self.loginSuccess()
+                    },
+                    fail:function(res){
+                        uni.showToast({
+                            title:'登录失败',
+                            icon:'none'
+                        })
+                    },
+                    complete:function () {
+                        // 完成后清除
+                        uni.removeStorage({key:'wxLogin'});
+                    }
+                })
+            },
+            // 登录成功调用,用于初始化基础数据
+            loginSuccess(){
+                uni.showToast({
+                    title: '登录成功',
+                    icon: 'none',
+                    duration:1000
+                });
+                let self = this
+                let globalDataFlag={}
+                self.$bus.$off('initGlobalData_loadReg')
+                self.$bus.$on('initGlobalData_loadReg',function (data) {
+                    globalDataFlag.loadReg = true
+                    self.loginSuccessLogical(globalDataFlag)
+                })
+                self.$bus.$off('initGlobalData_loadDicts')
+                self.$bus.$on('initGlobalData_loadDicts',function (data) {
+                    globalDataFlag.loadDicts = true
+                    self.loginSuccessLogical(globalDataFlag)
+                })
+                self.$bus.$off('initGlobalData_loadUserinfo')
+                self.$bus.$on('initGlobalData_loadUserinfo',function (data) {
+                    globalDataFlag.loadUserinfo = true
+                    self.loginSuccessLogical(globalDataFlag)
+                })
+                self.$http.initGobalData(true)
+            },
+            loginSuccessLogical(globalDataFlag){
+                let self = this
+                if(globalDataFlag.loadReg && globalDataFlag.loadDicts && (!self.$config.forcedLogin || globalDataFlag.loadUserinfo)){
+                    self.$bus.$off('initGlobalData_loadReg')
+                    self.$bus.$off('initGlobalData_loadDicts')
+                    self.$bus.$off('initGlobalData_loadUserinfo')
+                    self.navigateBack()
+                }
+            },
             navigateBack() {
 
                 let pages = getCurrentPages();
-                console.log(pages)
                 if(pages && pages.length>1){
                     uni.navigateBack({
                         delta: 1
@@ -119,18 +170,33 @@
                 ];
                 let checkRes = graceChecker.checkForm(this.form, rule);
                 return checkRes
-            }
+            },
+            wxLoginBtnClick(){
+
+                let self = this
+                self.$http.get('/publicplatform/authAuthorizePageUrl/' + self.$config.which,{
+                    data:{
+                        scope:'snsapi_userinfo',
+                        state:'STATE',
+                        redirectUrl:self.$config.hostApi + '/publicplatform/getAuthUserInfo/'+ self.$config.which +'?redirectUrl=' + self.$config.host + '/uni-app'
+                    },
+                    success:function (res) {
+                        let url = res.data.data.content
+                        uni.setStorageSync('wxLogin',true)
+                        window.location.href = url
+                    }
+                })
+
+            },
         },
         watch:{
-            hasLogin(hasLogin){
-                if(hasLogin/* && this.loginSuccess*/){
-                    this.navigateBack()
-                }
-            }
         },
-
-        onLoad() {
+        onLoad(options) {
             console.log('onLoad login')
+            //微信登录
+            if (!this.hasLogin && uni.getStorageSync('wxLogin')) {
+                this.wxLoginAuto()
+            }
         }
     }
 </script>

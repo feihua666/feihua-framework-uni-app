@@ -1,16 +1,17 @@
 import store from '@/store/index.js'
 import config from '@/common/config.js'
+import bus from '@/common/eventBus.js'
 const isArray = function(obj) {
     if (Array.isArray) {
         return Array.isArray(obj);
     } else {
         return Object.prototype.toString.call(obj) === "[object Array]";
     }
-}  
+}
 const request = function (url, data, success, fail,complete, header, method,checkLogin) {
     let _url = url
     if(_url.indexOf('http') !== 0){
-        _url = config.host + url
+        _url = config.hostApi + url
     }
 
 
@@ -27,7 +28,7 @@ const request = function (url, data, success, fail,complete, header, method,chec
         _data = data
     }
     uni.request({
-        url: _url, 
+        url: _url,
         data: _data,
         header: header,
         method: method,
@@ -43,7 +44,7 @@ const request = function (url, data, success, fail,complete, header, method,chec
                 //如果未登录
                 if(checkLogin && status == 401){
                     uni.removeStorage({key:'store_userinfo'});
-                    let  forceLogin = store.state.forcedLogin
+                    let  forceLogin = config.forcedLogin
                     if(forceLogin){
                         uni.reLaunch({
                             url: '/pages/login/login',
@@ -208,7 +209,7 @@ const _uploadFile = function(url,options){
         "accept": "application/json"
     }
     uni.uploadFile({
-        url: _url, 
+        url: _url,
         filePath: options.filePath,
         name: 'file',
         header: header,
@@ -224,7 +225,7 @@ const _uploadFile = function(url,options){
                 //如果未登录
                 if(checkLogin && status == 401){
                     uni.removeStorage({key:'store_userinfo'});
-                    let  forceLogin = store.state.forcedLogin
+                    let  forceLogin = config.forcedLogin
                     if(forceLogin){
                         uni.reLaunch({
                             url: '/pages/login/login',
@@ -271,6 +272,7 @@ const loadUserinfo = function (force) {
         let storageUserinfo = uni.getStorageSync('store_userinfo')
         if(storageUserinfo){
             store.commit('setUserinfo',storageUserinfo)
+            bus.$emit('initGlobalData_loadUserinfo',true)
             return
         }
     }
@@ -283,6 +285,7 @@ const loadUserinfo = function (force) {
             let content = res.data.data.content
             uni.setStorageSync('store_userinfo',content)
             store.commit('setUserinfo',content)
+            bus.$emit('initGlobalData_loadUserinfo',true)
         },complete:function () {
         }
     })
@@ -293,6 +296,7 @@ const loadDicts = function(force){
         let storageDicts = uni.getStorageSync('store_dicts')
         if (storageDicts) {
             store.commit('setDicts', storageDicts)
+            bus.$emit('initGlobalData_loadDicts',true)
             return
         }
     }
@@ -305,6 +309,7 @@ const loadDicts = function(force){
             let content = res.data.data.content;
             uni.setStorageSync('store_dicts',content)
             store.commit('setDicts',content)
+            bus.$emit('initGlobalData_loadDicts',true)
         }
     })
 }
@@ -313,6 +318,7 @@ const loadReg = function(force){
         let storageReg = uni.getStorageSync('store_reg')
         if (storageReg) {
             store.commit('setRegs', storageReg)
+            bus.$emit('initGlobalData_loadReg',true)
             return
         }
     }
@@ -321,6 +327,7 @@ const loadReg = function(force){
             let content = res.data.data.content;
             uni.setStorageSync('store_reg',content)
             store.commit('setRegs',content)
+            bus.$emit('initGlobalData_loadReg',true)
         }
     })
 }

@@ -2,8 +2,6 @@
 	export default {
 		onLaunch: async function () {
             console.log('App Launch')
-            // 参数为true开发环境，参数为false 线上环境
-            this.$http.initGobalData()
         },
 		onShow: function () {
 			console.log('App Show')

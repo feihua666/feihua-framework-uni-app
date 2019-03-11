@@ -45,7 +45,7 @@
             return {}
         },
         computed: {
-            ...mapState(['hasLogin', 'forcedLogin','userinfo'])
+            ...mapState(['hasLogin','userinfo'])
         },
         methods: {
             ...mapMutations(['removeUserinfo']),
@@ -68,7 +68,7 @@
                             /**
                              * 如果需要强制登录跳转回登录页面
                              */
-                            if (self.forcedLogin) {
+                            if (self.$config.forcedLogin) {
                                 uni.navigateTo({
                                     url: '/pages/login/login',
                                 });

@@ -5,11 +5,6 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
-        /**
-         * 是否需要强制登录
-         */
-        splash:true,
-        forcedLogin: true,
         hasLogin: false,
         userinfo: null,
         dicts: {},
@@ -31,9 +26,6 @@ const store = new Vuex.Store({
         },
         setRegs(state, regs) {
             state.regs = regs
-        },
-        setSplash(state, splash) {
-            state.splash = splash
         },
         setSearch(state, search) {
             state.search = search
