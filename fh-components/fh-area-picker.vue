@@ -203,19 +203,16 @@
                     return
                 }
                 self.$http.get('/base/areas', {
-                    data: {
-                        type: 'province',
-                        t: new Date().getTime()
-                    },
-                    success:  function (r) {
-                        let content = r.data.data.content
-                        self.province = content
-                        if(success && typeof success == 'function'){
-                            success()
-                        }
-                        //把省放入缓存
-                        uni.setStorageSync('area_province', content)
+                    type: 'province',
+                    t: new Date().getTime()
+                }).then(function (r) {
+                    let content = r.data.data.content
+                    self.province = content
+                    if(success && typeof success == 'function'){
+                        success()
                     }
+                    //把省放入缓存
+                    uni.setStorageSync('area_province', content)
                 })
             },
             loadCity: function (parentId,success){
@@ -230,23 +227,19 @@
                     return
                 }
                 self.$http.get('/base/areas', {
-                    data: {
-                        type: 'city',
-                        parentId: parentId,
-                        t: new Date().getTime()
-                    },
-                    success:  function (r) {
-                        let content = r.data.data.content
+                    type: 'city',
+                    parentId: parentId,
+                    t: new Date().getTime()
+                }).then(function (r) {
+                    let content = r.data.data.content
 
-                        if (content) {
-                            self.city = content
-                            if(success && typeof success == 'function'){
-                                success()
-                            }
-                            //保存在缓存
-                            uni.setStorageSync('area_city' + parentId,content)
+                    if (content) {
+                        self.city = content
+                        if(success && typeof success == 'function'){
+                            success()
                         }
-
+                        //保存在缓存
+                        uni.setStorageSync('area_city' + parentId,content)
                     }
                 })
             },
@@ -265,22 +258,18 @@
                 }
 
                 self.$http.get('/base/areas', {
-                    data: {
-                        type: 'district',
-                        parentId: parentId,
-                        t: new Date().getTime()
-                    },
-                    success:  function (r) {
-                        let content = r.data.data.content
-                        if (content) {
-                            self.district = content
-                            if(success && typeof success == 'function'){
-                                success()
-                            }
-                            //保存在缓存
-                            uni.setStorageSync('area_district' + parentId,content)
+                    type: 'district',
+                    parentId: parentId,
+                    t: new Date().getTime()
+                }).then(function (r) {
+                    let content = r.data.data.content
+                    if (content) {
+                        self.district = content
+                        if(success && typeof success == 'function'){
+                            success()
                         }
-
+                        //保存在缓存
+                        uni.setStorageSync('area_district' + parentId,content)
                     }
                 })
             }
