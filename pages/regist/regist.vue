@@ -21,12 +21,8 @@
 </template>
 
 <script>
-    import {
-        mapState,
-        mapMutations
-    } from 'vuex'
     //来自 graceUI 的表单验证， 使用说明见手册 http://grace.hcoder.net/doc/info/73-3.html
-    import  graceChecker from "@/common/graceChecker.js"
+    import  graceChecker from "@/utils/graceChecker.js"
     export default {
         components: {
         },
@@ -40,7 +36,6 @@
                 }
             }
         },
-        computed: mapState(['regs']),
         methods: {
             register() {
 
@@ -49,52 +44,49 @@
                 }
                 let self = this
                 self.registBtnLoading = true
-                self.$http.post('/base/user/regist',{
-                    data:self.form,
-                    success:function (res) {
-                        uni.showToast({
-                            icon: 'none',
-                            title: '恭喜注册成功'
-                        });
-                        self.registBtnLoading = false
-                        uni.navigateBack({
-                            delta: 1
-                        });
-                    },
-                    fail:function (res) {
-                        let statusCode = res.statusCode
-                        let _data = res.data.data;
-                        if(statusCode == 409){
-                            if(_data.code == 'E409_100002'){
-                                uni.showToast({
-                                    icon: 'none',
-                                    title: '帐号已存在'
-                                });
-                            }else if(_data.code == 'E409_100003'){
-                                uni.showToast({
-                                    icon: 'none',
-                                    title: '邮箱已存在'
-                                });
-                            }else if(_data.code == 'E409_100004'){
-                                uni.showToast({
-                                    icon: 'none',
-                                    title: '手机号已存在'
-                                });
-                            }
-                        }else if(statusCode == 400){
+                self.$http.post('/base/user/regist',self.form).then(function (res) {
+                    uni.showToast({
+                        icon: 'none',
+                        title: '恭喜注册成功'
+                    });
+                    self.registBtnLoading = false
+                    uni.navigateBack({
+                        delta: 1
+                    });
+                    self.registBtnLoading = false
+                }).catch(function (res) {
+                    let statusCode = res.statusCode
+                    let _data = res.data.data;
+                    if(statusCode == 409){
+                        if(_data.code == 'E409_100002'){
                             uni.showToast({
                                 icon: 'none',
-                                title: '参数不正确'
+                                title: '帐号已存在'
+                            });
+                        }else if(_data.code == 'E409_100003'){
+                            uni.showToast({
+                                icon: 'none',
+                                title: '邮箱已存在'
+                            });
+                        }else if(_data.code == 'E409_100004'){
+                            uni.showToast({
+                                icon: 'none',
+                                title: '手机号已存在'
                             });
                         }
-                        self.registBtnLoading = false
+                    }else if(statusCode == 400){
+                        uni.showToast({
+                            icon: 'none',
+                            title: '参数不正确'
+                        });
                     }
+                    self.registBtnLoading = false
                 })
             },
             checkRegistForm(){
                 let rule = [
-                    {name:"account", checkType : "reg", checkRule:this.regs.password,  errorMsg:"帐号8~16字母数字组合"},
-                    {name:"password", checkType : "reg", checkRule:this.regs.password,  errorMsg:"密码8~16字母数字组合"},
+                    {name:"account", checkType : "self.registBtnLoading = false", checkRule:'',  errorMsg:"帐号8~16字母数字组合"},
+                    {name:"password", checkType : "self.registBtnLoading = false", checkRule:'',  errorMsg:"密码8~16字母数字组合"},
                     {name:"email", checkType : "email", checkRule:"",  errorMsg:"请输入正确的邮箱"}
                 ];
                 let checkRes = graceChecker.checkForm(this.form, rule);

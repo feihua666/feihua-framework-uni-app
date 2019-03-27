@@ -42,7 +42,10 @@
         display: flex;
     }
     /* #endif */
-
+    button[size=mini][loading]:before{
+        width:25upx !important;
+        height:25upx !important;
+    }
 
     .fh-padding-30{
         padding:30upx;
@@ -59,6 +62,10 @@
     .fh-padding-bottom-30{
         padding-bottom:30upx;
     }
+    .fh-padding-0{
+        padding:0;
+    }
+
     .fh-margin-right-30{
         margin-right:30upx;
     }
@@ -71,9 +78,7 @@
     .fh-margin-bottom-30{
         margin-bottom:30upx;
     }
-    .fh-padding-0{
-        padding:0;
-    }
+
     .fh-justify-content-center{
         justify-content: center;
     }
@@ -92,8 +97,5 @@
     .fh-text-align-right{
         text-align: right;
     }
-    button[size=mini][loading]:before{
-        width:25upx !important;
-        height:25upx !important;
-    }
+
 </style>

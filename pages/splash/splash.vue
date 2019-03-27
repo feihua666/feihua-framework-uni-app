@@ -1,5 +1,5 @@
 <template>
-	<swiper class="swiper fh-height-100" :indicator-dots="indicatorDots" @change="change" :autoplay="autoplay" :interval="interval" :duration="duration">sssss
+	<swiper class="swiper fh-height-100" :indicator-dots="indicatorDots" @change="change" :autoplay="autoplay" :interval="interval" :duration="duration">
 		<swiper-item>
 			<view class="swiper-item uni-bg-red fh-height-100">A</view>
 		</swiper-item>
@@ -26,7 +26,7 @@
 		},
 		methods:{
 			goIndex(){
-				uni.setStorageSync('splashShowed',true)
+				this.$storageUtils.setSync('splashShowed',true)
                 uni.reLaunch({
                     url:'/pages/index/index'
                 })

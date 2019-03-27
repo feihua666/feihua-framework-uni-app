@@ -1,11 +1,11 @@
 <template>
 		<view class="fh-picture-list fh-width-100">
 			<view v-for="(item,index) in images"  class="fh-picture-item uni-center">
-				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="$config.file.getDownloadUrl(item)" @tap="$utils.pvi($config.file.getDownloadUrl(item))" mode="aspectFill"></image>
+				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="$config.file.getDownloadUrl(item)" @tap="$utils.pic.pvi($config.file.getDownloadUrl(item))" mode="aspectFill"></image>
 				<text class='fh-pickture-delete' @click='onDelete(index)' :data-index="index">x</text>
 			</view>
 			<view v-for="(item,index) in picList" :key="index" class="fh-picture-item uni-center">
-				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="item.url ? item.url:item.tempUrl" @tap="$utils.pvi(item.url ? item.url:item.tempUrl)" mode="aspectFill"></image>
+				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="item.url ? item.url:item.tempUrl" @tap="$utils.pic.pvi(item.url ? item.url:item.tempUrl)" mode="aspectFill"></image>
 				<view v-show="item.uploading" class="fh-pickture-uploading uni-center fh-width-100">上传中</view>
 				<text class='fh-pickture-delete' @click='deleteImage(index)' :data-index="index">x</text>
 			</view>
@@ -83,29 +83,22 @@
 								uploading:true
 							})
 							//上传,使用默认上传路径
-							self.$http.uploadFile(null,{
-                                filePath: res.tempFiles[i].path,
-                                data:{
-                                    path:self.path,
-									t:new Date().getTime()
-                                },
-                                success:function (res ) {
-                                    self.onUploadSuccess(res)
-                                },
-								complete:function () {
-                                    for(let m=0;m<self.picList.length;m++){
-                                        if(self.picList[m].index == index){
-                                            self.deleteImage(m)
-                                        }
-                                    }
-                                }
-							})
+							self.$http.uploadFile(
+							    res.tempFiles[i].path,
+                                {path:self.path,t:new Date().getTime()})
+								.then(res => {
+									self.onUploadSuccess(res)
+									for(let m = 0;m < self.picList.length; m++){
+										if(self.picList[m].index == index){
+											self.deleteImage(m)
+										}
+									}
+								})
                         }
                     }
                 })
             },
             deleteImage(index) {
-                console.log(index)
             	this.picList.splice(index, 1);
             }
         }

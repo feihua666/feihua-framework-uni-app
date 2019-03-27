@@ -34,9 +34,6 @@
 </template>
 
 <script>
-    import {
-        mapState
-    } from 'vuex'
     import uniNavBar from '@/components/uni-nav-bar.vue'
     import uniIcon from '@/components/uni-icon.vue'
 	export default {
@@ -44,7 +41,6 @@
             uniNavBar,
             uniIcon
         },
-        computed: mapState(['hasLogin','userinfo']),
 		data() {
 			return {
 			    keyword:'',
@@ -74,48 +70,34 @@
                 this.$bus.$on('indexSearch',function (data) {
                     self.doSearch(data)
                 })
-                uni.navigateTo({
-                    url: '/pages/search/search?searchType=index&keyword=' + this.keyword
-                });
+                this.$utils.n.ngt('/pages/search/search?searchType=index&keyword=' + this.keyword)
             },
             doSearch(data){
                 this.keyword = data.keyword
                 // 执行搜索
-                console.log(data)
             },
 
             // 以下是页面跳转相关逻辑 ***************************
             pageLogical(){
-                let splashShowed = uni.getStorageSync('splashShowed')
+                let self = this
+                let splashShowed = this.$storageUtils.getSync('splashShowed')
                 // 先判断引导页是否需要展示，如果需要展示，展示引导页
                 if(!splashShowed){
                     uni.reLaunch({
                         url:'/pages/splash/splash'
                     })
                 }else{
-                    if (!this.hasLogin) {
-                        if(this.$config.forcedLogin){
+                    this.$http.hasLogin().then(function () {
+                        // 已登录
+                    }).catch(function (res) {
+                        console.log(res);
+                        // 未登录
+                        if(self.$config.forcedLogin){
                             uni.reLaunch({
                                 url: '/pages/login/login'
                             });
-                        }else{
-                            uni.showModal({
-                                title: '未登录',
-                                content: '您未登录，需要登录后才能继续享受更多服务',
-                                /**
-                                 * 如果需要强制登录，不显示取消按钮
-                                 */
-                                showCancel: true,
-                                success: (res) => {
-                                    if (res.confirm) {
-                                        uni.navigateTo({
-                                            url: '/pages/login/login'
-                                        });
-                                    }
-                                }
-                            });
                         }
-                    }
+                    })
                 }
             }
         },
@@ -126,7 +108,6 @@
 </script>
 
 <style>
-
     .fh-search-view {
         width: 50%;
         display: flex;

@@ -33,22 +33,28 @@
 </template>
 
 <script>
-    import {
-        mapState,
-        mapMutations
-    } from 'vuex'
     import uniBadge from "@/components/uni-badge.vue";
     export default {
         components:{uniBadge},
         data () {
-
-            return {}
+            return {
+                hasLogin: false,
+                userinfo: {
+                }
+            }
         },
         computed: {
-            ...mapState(['hasLogin','userinfo'])
+        },
+        onLoad () {
+            let self = this
+            self.$http.getCurrentUserinfo().then(function (content) {
+                self.userinfo = content
+            })
+            self.$http.hasLogin().then(function (content) {
+                self.hasLogin = true
+            })
         },
         methods: {
-            ...mapMutations(['removeUserinfo']),
             logoutBtnClick() {
 
                 let self = this
@@ -61,28 +67,25 @@
                     showCancel: true,
                     success: (res) => {
                         if (res.confirm) {
-                            self.removeUserinfo();
-                            uni.removeStorageSync('store_userinfo');
                             //退出登录
-                            self.$http.post('/logout')
-                            /**
-                             * 如果需要强制登录跳转回登录页面
-                             */
-                            if (self.$config.forcedLogin) {
-                                uni.navigateTo({
-                                    url: '/pages/login/login',
-                                });
-                            }else{
-                                uni.reLaunch({
-                                    url: '/pages/index/index',
-                                });
-                            }
+                            self.$http.post('/logout').then(function () {
+                                /**
+                                 * 如果需要强制登录跳转回登录页面
+                                 */
+                                if (self.$config.forcedLogin) {
+                                    uni.navigateTo({
+                                        url: '/pages/login/login',
+                                    });
+                                }else{
+                                    uni.reLaunch({
+                                        url: '/pages/index/index',
+                                    });
+                                }
+                            })
                         }
                     }
                 });
             }
-        },
-        onLoad(){
         }
     }
 </script>

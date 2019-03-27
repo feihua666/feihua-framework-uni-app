@@ -1,6 +1,6 @@
 /**
 数据验证（表单验证）
-来自 grace.hcoder.net 
+来自 grace.hcoder.net
 作者 hcoder 深海
 */
 module.exports = {
@@ -45,7 +45,7 @@ module.exports = {
 						return false;
 					}
 				break;
-				case 'betweenF': 
+				case 'betweenF':
 					var reg = /^-?[0-9][0-9]?.+[0-9]+$/;
 					if (!reg.test(data[rule[i].name])){this.error = rule[i].errorMsg; return false;}
 					var minMax = rule[i].checkRule.split(',');
@@ -86,6 +86,10 @@ module.exports = {
 				case 'notnull':
 					if(data[rule[i].name] == null || data[rule[i].name].length < 1){this.error = rule[i].errorMsg; return false;}
 				break;
+					// 以下是自己添加
+                case 'password':
+                    var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+                    if (!reg.test(data[rule[i].name])) { this.error = rule[i].errorMsg; return false; }
 			}
 		}
 		return true;

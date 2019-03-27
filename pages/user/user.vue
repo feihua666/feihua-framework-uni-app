@@ -5,7 +5,7 @@
 
             </view>
             <view class="uni-list-cell uni-list-cell-last" hover-class="uni-list-cell-hover">
-                <view class="uni-list-cell-navigate uni-navigate-right"   @click="goPage('/pages/user/userinfo')">
+                <view class="uni-list-cell-navigate uni-navigate-right"   @click="$utils.n.ngt('/pages/user/userinfo')">
                         <view class="uni-media-list-logo">
                             <image v-if="userinfo.photo" :src="$config.file.getDownloadUrl(userinfo.photo)"></image>
                         </view>
@@ -50,25 +50,24 @@
 </template>
 
 <script>
-    import {
-        mapState,
-    } from 'vuex'
     import uniBadge from "@/components/uni-badge.vue";
     export default {
         components:{uniBadge},
         data () {
-
-            return {}
+            return {
+                userinfo: {}
+            }
         },
         computed: {
-            ...mapState(['userinfo'])
         },
         methods: {
-            goPage(url){
-                uni.navigateTo({
-                    url: url
-                });
-            }
+
+        },
+        onLoad () {
+            let self = this
+            self.$http.getCurrentUserinfo().then(function (content) {
+                self.userinfo = content
+            })
         }
     }
 </script>

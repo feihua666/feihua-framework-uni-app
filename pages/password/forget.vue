@@ -25,12 +25,8 @@
 </template>
 
 <script>
-    import {
-        mapState,
-        mapMutations
-    } from 'vuex'
     //来自 graceUI 的表单验证， 使用说明见手册 http://grace.hcoder.net/doc/info/73-3.html
-    import  graceChecker from "@/common/graceChecker.js"
+    import  graceChecker from "@/utils/graceChecker.js"
     export default {
         components: {
         },
@@ -52,7 +48,6 @@
             }
         },
         computed:{
-            ...mapState(['regs']),
             reFetch (){
                 return this.hasFetch? '重新':''
             },
@@ -73,36 +68,31 @@
 
                 self.sendLoading = true;
                 self.$http.post('/base/user/sendcode',{
-                    data:{
-                        type:'email',
-                        identifier:self.form.email
-                    },
-                    success:function (res) {
-                        uni.showToast({
-                            icon: 'none',
-                            title: '已发送重置邮件至注册邮箱，请注意查收。',
-                            duration: 3000
-                        });
-                        self.time = 60;
+                    type:'email',
+                    identifier:self.form.email
+                }).then(function (res) {
+                    uni.showToast({
+                        icon: 'none',
+                        title: '已发送重置邮件至注册邮箱，请注意查收。',
+                        duration: 3000
+                    });
+                    self.time = 60;
 
-                        self.setTime = setInterval(function () {
-                            self.time = self.time - 1;
-                            if(self.time < 0){
-                                clearInterval(self.setTime)
-                            }
-                        },1000)
-                        self.hasFetch = true
-                    },
-                    fail:function (res) {
-                        uni.showToast({
-                            icon: 'none',
-                            title: '发送验证码失败，请查检邮箱是否正确',
-                            duration: 3000
-                        });
-                    },
-                    complete:function (res) {
-                        self.sendLoading = false;
-                    }
+                    self.setTime = setInterval(function () {
+                        self.time = self.time - 1;
+                        if(self.time < 0){
+                            clearInterval(self.setTime)
+                        }
+                    },1000)
+                    self.hasFetch = true
+                    self.sendLoading = false;
+                }).catch(function (res) {
+                    uni.showToast({
+                        icon: 'none',
+                        title: '发送验证码失败，请查检邮箱是否正确',
+                        duration: 3000
+                    });
+                    self.sendLoading = false;
                 })
 
             },
@@ -113,34 +103,29 @@
                 let self = this
                 self.findLoading = true;
                 self.$http.put('/base/user/password/forget/find',{
-                    data:{
-                        type:'email',
-                        identifier:self.form.email,
-                        password: self.form.password,
-                        code:self.form.code
-                    },
-                    success:function (res) {
-                        uni.navigateBack({
-                            delta: 1
+                    type:'email',
+                    identifier:self.form.email,
+                    password: self.form.password,
+                    code:self.form.code
+                }).then(function (res) {
+                    self.findLoading = false
+                    uni.navigateBack({
+                        delta: 1
+                    });
+                }).catch(function (res) {
+                    let statusCode = res.statusCode
+                    if(statusCode == 400){
+                        uni.showToast({
+                            icon: 'none',
+                            title: '验证码不正确'
                         });
-                    },
-                    fail:function (res) {
-                        let statusCode = res.statusCode
-                        if(statusCode == 400){
-                            uni.showToast({
-                                icon: 'none',
-                                title: '验证码不正确'
-                            });
-                        }else if(statusCode == 404){
-                            uni.showToast({
-                                icon: 'none',
-                                title: '邮箱不存在'
-                            });
-                        }
-                    },
-                    complete:function (res) {
-                        self.findLoading = false;
+                    }else if(statusCode == 404){
+                        uni.showToast({
+                            icon: 'none',
+                            title: '邮箱不存在'
+                        });
                     }
+                    self.findLoading = false
                 })
             },
             checkFormEmail(){
@@ -154,7 +139,7 @@
                 let rule = [
                     {name:"email", checkType : "email", checkRule:"",  errorMsg:"请输入正确的邮箱"},
                     {name:"code", checkType : "notnull", checkRule:"",  errorMsg:"请输入验证码"},
-                    {name:"password", checkType : "reg", checkRule:this.regs.password,  errorMsg:"密码8~16字母数字组合"}
+                    {name:"password", checkType : "password", checkRule:'',  errorMsg:"密码8~16字母数字组合"}
                 ];
                 let checkRes = graceChecker.checkForm(this.form, rule);
                 return checkRes
