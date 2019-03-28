@@ -81,11 +81,21 @@ const message = {
         })
     }
 }
+// 深度获取对象属性，attr支持点，如：a.b.c
+const dGetValue = function (obj, attr) {
+    let value = obj
+    let key = attr.split('.')
+    for (let i = 0; i < key.length; i++) {
+        value = value[key[i]]
+    }
+    return value
+}
 export default {
     isArray: isArray,
     copy: copy,
     n: navigate,
     pic: pic,
-    message: message
+    message: message,
+    dGetValue: dGetValue
 
 }
