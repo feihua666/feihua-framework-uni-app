@@ -1,19 +1,18 @@
 <template>
-		<view class="fh-picture-list fh-width-100">
-			<view v-for="(item,index) in images"  class="fh-picture-item uni-center">
-				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="$config.file.getDownloadUrl(item)" @tap="$utils.pic.pvi($config.file.getDownloadUrl(item))" mode="aspectFill"></image>
-				<text class='fh-pickture-delete' @click='onDelete(index)' :data-index="index">x</text>
+		<view class="fh-picture-list fh-width-100 uni-flex fh-flex-wrap">
+			<view v-for="(item,index) in images"  class="fh-picture-item uni-center" :style="itemStyle">
+				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="$config.file.getDownloadUrl(item.thumbUrl)" @tap="$utils.pic.pvi($config.file.getDownloadUrl(item.originUrl))" mode="aspectFill"></image>
+				<text class='fh-pickture-delete' @click='onDelete(item)' :data-index="index">x</text>
 			</view>
-			<view v-for="(item,index) in picList" :key="index" class="fh-picture-item uni-center">
+			<view v-for="(item,index) in picList" :key="index" class="fh-picture-item uni-center" :style="itemStyle">
 				<image class="fh-picture-item-imge fh-width-100 fh-height-100" :src="item.url ? item.url:item.tempUrl" @tap="$utils.pic.pvi(item.url ? item.url:item.tempUrl)" mode="aspectFill"></image>
 				<view v-show="item.uploading" class="fh-pickture-uploading uni-center fh-width-100">上传中</view>
 				<text class='fh-pickture-delete' @click='deleteImage(index)' :data-index="index">x</text>
 			</view>
 
-			<view class='fh-picture-item fh-picture-item-last' v-show="currentCount < count">
-				<view class="fh-add-image fh-width-100 fh-height-100 uni-center" @click='chooseImage'>
-
-				<text class="fh-pictrue-add-text">+</text>
+			<view class='fh-picture-item uni-center' :style="itemStyle" v-show="currentCount < count" v-for="n in (showAllAdd ? count-currentCount : 1)">
+				<view class="fh-add-image uni-flex fh-justify-content-center fh-align-items-center fh-height-100" @click='chooseImage'>
+				<view class="fh-pictrue-add-text">+</view>
 				</view>
 			</view>
 		</view>
@@ -36,21 +35,31 @@
             //默认回显图片地址
             images:{
                 type: Array,
-				value:[]
+                default:[]
 			},
 			onDelete:{
-                value:function(index){}
+                default:function(item){}
 			},
 			onUploadSuccess:{
-                value:function(res){}
+                default:function(res){}
 			},
 			//最大上传数量
             count: {
                 type: Number,
-                value: 1
+                default:1
             },
+			// 每一项的样式表，一般用来设置宽度和高度
+            itemStyle:{
+                default:''
+			},
+			//是否显示所有未上传的+号
+			showAllAdd:{
+                default:false
+			},
 			//图片路径
-			path:''
+			path:{
+                default:''
+			}
         },
         methods: {
             // 选择图片
@@ -83,17 +92,17 @@
 								uploading:true
 							})
 							//上传,使用默认上传路径
-							self.$http.uploadFile(
-							    res.tempFiles[i].path,
-                                {path:self.path,t:new Date().getTime()})
-								.then(res => {
-									self.onUploadSuccess(res)
-									for(let m = 0;m < self.picList.length; m++){
-										if(self.picList[m].index == index){
-											self.deleteImage(m)
-										}
-									}
-								})
+							self.$http.uploadFile(res.tempFiles[i].path,{
+                                path:self.path,
+                                t:new Date().getTime()
+                            }).then(function (res) {
+                                self.onUploadSuccess(res)
+                                for(let m=0;m<self.picList.length;m++){
+                                    if(self.picList[m].index == index){
+                                        self.deleteImage(m)
+                                    }
+                                }
+                            })
                         }
                     }
                 })
@@ -108,8 +117,7 @@
 <style>
 
 .fh-picture-item{
-	margin-right: 20upx;
-	margin-top: 20upx;
+	margin: 10upx;
 	display: inline-block;
 	position: relative;
 	width:150upx;
@@ -117,9 +125,6 @@
 	background-color: #eee;
 	cursor: pointer;
 	color: #ddd;
-}
-.fh-picture-item-last{
-	margin-right: 0;
 }
 .fh-pickture-delete{
 	position: absolute;
@@ -132,15 +137,10 @@
 	line-height: 35rpx;
 	text-align: center;
 	background-color: #ff8616;
+	border: 2px solid white;
 }
 .fh-pictrue-add-text{
-	position: absolute;
-	font-size: 100upx;
-	left:50%;
-	top:50%;
-	margin-left: -38upx;
-	margin-top: -60upx;
-	line-height: 1;
+	font-size: 80upx;
 }
 .fh-pickture-uploading{
 	line-height: 150upx;

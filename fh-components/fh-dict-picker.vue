@@ -5,9 +5,6 @@
 
 <script>
     import mpvuePicker from '@/components/mpvue-picker/mpvuePicker.vue';
-    import {
-        mapState
-    } from 'vuex'
     export default {
         components: {
             mpvuePicker
@@ -23,7 +20,6 @@
             };
         },
         computed:{
-            ...mapState(['dicts'])
 		},
         props: {
             // 默认字典值
@@ -44,7 +40,10 @@
         mounted(){
             console.log('dictpickerload')
             if(this.type){
-                this.dictConvertToPicker(this.dicts[this.type])
+                let self = this
+                self.$http.getDictsByType(this.type).then(function (dictItems) {
+                    self.dictConvertToPicker(dictItems)
+                })
             }
         },
         methods: {
@@ -65,6 +64,7 @@
                 this.$refs.mpvuePicker.show()
             },
             onConfirm(obj){
+                obj.value = obj.value[0]
                 this.$emit('onConfirm', obj);
             },
             onCancel(obj){
@@ -73,21 +73,28 @@
         },
         watch:{
             valueDefault(oldValue,newVaule){
-                let exist = false
-                for(let i = 0;i<this.dicts[this.type].length;i++){
-                    if(this.valueDefault == this.dicts[this.type][i].value){
-                        this.mpvuePicker.pickerValueDefault = [i]
-                        exist = true
-                        return
+                let self = this
+                self.$http.getDictsByType(this.type).then(function (dictItems) {
+                    let exist = false
+                    for(let i = 0;i<dictItems.length;i++){
+                        if(self.valueDefault == dictItems[i].value){
+                            self.mpvuePicker.pickerValueDefault = [i]
+                            exist = true
+                            return
+                        }
                     }
-                }
-                if(exist == false){
-                    this.mpvuePicker.pickerValueDefault = [0]
-                }
+                    if(exist == false){
+                        self.mpvuePicker.pickerValueDefault = [0]
+                    }
+                })
             },
             type(oldValue,newVaule){
                 if(this.type){
-                    this.dictConvertToPicker(this.dicts[this.type])
+                    let self = this
+                    self.$http.getDictsByType(this.type).then(function (dictItems) {
+                        self.dictConvertToPicker(dictItems)
+
+                    })
                 }
             }
         }
@@ -95,48 +102,4 @@
 </script>
 
 <style>
-
-.fh-picture-item{
-	margin-right: 20upx;
-	margin-top: 20upx;
-	display: inline-block;
-	position: relative;
-	width:150upx;
-	height:150upx;
-	background-color: #eee;
-	cursor: pointer;
-	color: #ddd;
-}
-.fh-picture-item-last{
-	margin-right: 0;
-}
-.fh-pickture-delete{
-	position: absolute;
-	top: -11rpx;
-	right: -11rpx;
-	color: rgba(255, 255, 255, 0.49);
-	border-radius: 50%;
-	width: 40rpx;
-	height: 40rpx;
-	line-height: 35rpx;
-	text-align: center;
-	background-color: #ff8616;
-}
-.fh-pictrue-add-text{
-	position: absolute;
-	font-size: 100upx;
-	left:50%;
-	top:50%;
-	margin-left: -38upx;
-	margin-top: -60upx;
-	line-height: 1;
-}
-.fh-pickture-uploading{
-	line-height: 150upx;
-	position: absolute;
-	left:0;
-	top:0;
-	bottom: 0;
-	top: 0;
-}
 </style>

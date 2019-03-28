@@ -51,30 +51,31 @@
                 }
                 _data.pageNo = self.page.pageNo
                 _data.pageSize = self.page.pageSize
-				self.$http.get(url,_data).then(function (res) {
-                    responsePage.pageNum = res.data.data.page.pageNum
-                    if(options.success && typeof options.success == 'function'){
-                        options.success(res)
-                    }
-
-                    if(options.pullDownRefresh == true){
-                        uni.stopPullDownRefresh();
-                    }
-                    if(responsePage.pageNum <= requestPage.pageNo){
-                        self.loadMore.loadingType = 2;
-                    }else{
-                        self.loadMore.loadingType = 0;
-                    }
-                }).catch(function (res) {
-                    if(options.pullDownRefresh == true){
-                        uni.stopPullDownRefresh();
-                    }
-                    if(responsePage.pageNum <= requestPage.pageNo){
-                        self.loadMore.loadingType = 2;
-                    }else{
-                        self.loadMore.loadingType = 0;
-                    }
+                return new Promise((resolve, reject) => {
+                    self.$http.get(url,_data).then(function (res) {
+                        responsePage.pageNum = res.data.data.page.pageNum
+                        if(options.pullDownRefresh == true){
+                            uni.stopPullDownRefresh();
+                        }
+                        if(responsePage.pageNum <= requestPage.pageNo){
+                            self.loadMore.loadingType = 2;
+                        }else{
+                            self.loadMore.loadingType = 0;
+                        }
+                        resolve(res)
+                    }).catch(function (res) {
+                        if(options.pullDownRefresh == true){
+                            uni.stopPullDownRefresh();
+                        }
+                        if(responsePage.pageNum <= requestPage.pageNo){
+                            self.loadMore.loadingType = 2;
+                        }else{
+                            self.loadMore.loadingType = 0;
+                        }
+                        reject(res)
+                    })
                 })
+
 			}
 		}
 	}

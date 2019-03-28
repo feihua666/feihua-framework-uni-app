@@ -30,16 +30,19 @@
         },
 		created(){
 
-	        let dictItems = this.$dictUtils.getDictByType(this.type)
-			for(let i=0;i<dictItems.length;i++){
-			    this.dictItems.push({
-					name:dictItems[i].name,
-					value:dictItems[i].value,
-					disabled:false,
-					checked:false
-				})
-			}
-			this.init(this.valueDefault)
+	        let self = this
+			self.$http.getDictsByType(this.type).then(function (dictItems) {
+                for(let i=0;i<dictItems.length;i++){
+                    self.dictItems.push({
+                        name:dictItems[i].name,
+                        value:dictItems[i].value,
+                        disabled:false,
+                        checked:false
+                    })
+                }
+                self.init(self.valueDefault)
+            })
+
 		},
 		data() {
 			return {

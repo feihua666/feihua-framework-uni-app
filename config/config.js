@@ -22,6 +22,7 @@ const config = {
     },
     // 是否需要强制登录
     forcedLogin: true,
+    // 标识是小程序下是公众帐号，如果不是，可以配置为空
     which:'yangwei',
     // 这里后端会加客户端配置
     loginClient: 'uni-app'

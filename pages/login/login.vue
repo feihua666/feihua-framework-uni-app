@@ -37,7 +37,7 @@
                 loginLoading:false,
 				form: {
 				  loginType: 'ACCOUNT',
-				  loginClient: 'h5',
+				  loginClient: this.$config.loginClient,
 				  principal: '',
 				  password: '',
 				  captcha: '',
@@ -45,8 +45,8 @@
 				},
                 wxLoginForm:{
                     loginType: 'WX_PLATFORM',
-                    loginClient: 'h5',
-                    type:'yangwei',
+                    loginClient: this.$config.loginClient,
+                    type:this.$config.which,
                     rememberMe: false
                 },
             }
@@ -132,7 +132,7 @@
                     uni.setStorageSync('wxLogin',true)
                     window.location.href = url
                 })
-            },
+            }
         },
         watch:{
         },
