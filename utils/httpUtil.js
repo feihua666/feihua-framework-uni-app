@@ -248,8 +248,26 @@ export function getDictsByType (type) {
         } else {
             get('/base/dicts/' + type, {orderby: 'sequence', t: new Date().getTime() + Math.random()}).then(response => {
                 let content = response.data.data.content
-                cacheDict[type] = content
-                resolve(content)
+                let _content = []
+                let values = config.dictExcludeValue[type]
+                if (values){
+                    for(let i = 0;i < content.length;i++){
+                        let exist = false
+                        for(let j = 0;j < values.length;j++){
+                            if (values[j] == content[i].value) {
+                                exist = true
+                                break
+                            }
+                        }
+                        if (!exist) {
+                            _content.push(content[i])
+                        }
+                    }
+                }else {
+                    _content = content
+                }
+                cacheDict[type] = _content
+                resolve(_content)
             }).catch(err => {
                 reject(err)
             })
@@ -257,6 +275,7 @@ export function getDictsByType (type) {
     })
     return promise
 }
+
 
 /**
  * 根据字典值和类型获取字典对象
