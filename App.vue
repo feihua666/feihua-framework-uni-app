@@ -4,7 +4,17 @@
             console.log('App Launch')
         },
 		onShow: function () {
-			console.log('App Show')
+            console.log('App Show')
+            this.$http.hasLogin().then(function () {
+            }).catch(function () {
+                let hash = window.location.hash
+                if(hash && hash.substring(1).indexOf('/pages') == 0){
+                    uni.setStorageSync('navigateToPage',hash.substring(1))
+                    uni.reLaunch({
+                        url:'/pages/index/index'
+                    })
+                }
+            })
 		},
 		onHide: function () {
 			console.log('App Hide')

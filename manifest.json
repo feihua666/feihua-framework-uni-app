@@ -62,6 +62,7 @@
             "port" : 8384,
             "disableHostCheck" : true,
             "https" : false
-        }
+        },
+        "template" : "index.html"
     }
 }

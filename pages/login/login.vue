@@ -139,7 +139,11 @@
         onLoad(options) {
             console.log('onLoad login')
             let self = this
-            this.$http.hasLogin().catch(function () {
+            this.$http.hasLogin()
+                .then(function (res) {
+                    //已登录
+                })
+                .catch(function () {
                 //微信登录
                 if (uni.getStorageSync('wxLogin')) {
                     self.wxLoginAuto()

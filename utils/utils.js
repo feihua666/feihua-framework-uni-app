@@ -90,12 +90,77 @@ const dGetValue = function (obj, attr) {
     }
     return value
 }
+const isWeixn = function(){
+    if (navigator && navigator.userAgent) {
+        let ua = navigator.userAgent.toLowerCase()
+        if(ua.match(/MicroMessenger/i)=="micromessenger") {
+            return true
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+
+}
+const objToParam = function(param) {
+    if(typeof param == 'object'){
+        let r = ''
+        for(let key in param) {
+            r += '&' + key + '=' + param[key]
+        }
+        if (r) {
+            return r.substring(1)
+        }
+    }
+    return param
+}
+// 拼接url参数
+const concatUrlParam = function(url,param){
+    let strParam = objToParam(param)
+    if(url && strParam) {
+        let r = ''
+        let urlArray = url.split('#')
+        let _url = urlArray[0]
+        if(_url.indexOf('?') != -1){
+            r += _url + '&' + strParam
+        }else {
+            r += _url + '?' + strParam
+        }
+        if(urlArray.length >1){
+            r += '#' + urlArray[1]
+        }
+
+        return r
+    }
+    return url
+}
+const getUrlParam = function (url, name) {
+    //构造一个含有目标参数的正则表达式对象
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r;
+    if (url) {
+        r = url.substr(url.indexOf("?"));
+    } else {
+        r = window.location.search;
+    }
+    //匹配目标参数
+    r = r.substr(1).match(reg);
+    //返回参数值
+    if (r != null){
+        return decodeURI(r[2]).split('#')[0]
+    }
+    return null;
+}
 export default {
     isArray: isArray,
     copy: copy,
     n: navigate,
     pic: pic,
     message: message,
-    dGetValue: dGetValue
+    dGetValue: dGetValue,
+    isWeixn: isWeixn,
+    concatUrlParam: concatUrlParam,
+    getUrlParam: getUrlParam
 
 }

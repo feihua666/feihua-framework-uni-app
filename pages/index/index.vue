@@ -89,6 +89,9 @@
                 }else{
                     this.$http.hasLogin().then(function () {
                         // 已登录
+                        // 首页数据处理
+                        //
+                        self.navigateToPage()
                     }).catch(function (res) {
                         console.log(res);
                         // 未登录
@@ -98,6 +101,14 @@
                             });
                         }
                     })
+                }
+            },
+            // 是否需要导航，一般分享的用到
+            navigateToPage(){
+                let page = uni.getStorageSync('navigateToPage')
+                uni.removeStorageSync('navigateToPage')
+                if(page){
+                    this.$utils.n.ngt(page)
                 }
             }
         },
