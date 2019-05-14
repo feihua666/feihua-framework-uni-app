@@ -24,7 +24,14 @@
 </template>
 
 <script>
-
+	let defaultNoneAreaId = ''
+	let defaultNoneArea = function () {
+		return {
+            id: defaultNoneAreaId,
+            name: '不限',
+            parentId: '0'
+        }
+    }
     export default {
         data() {
             return {
@@ -51,7 +58,10 @@
                 }
             },
             /* 主题色 */
-            themeColor: String
+            themeColor: String,
+			showNone: {
+                default: false
+			}
         },
         watch:{
             pickerValueDefault(){
@@ -87,7 +97,6 @@
                         provinceId = self.pickerValueDefault[0]
                     }
                     self.provinceDataList = self.areaConvertToPicker(self.province)
-
                     self.loadCity(provinceId,function () {
                         let cityId = self.city[0].id
                         if(self.pickerValueDefault.length > 1){
@@ -136,6 +145,16 @@
             },
             handPickValueDefault() {
             },
+			dealWithShowNone (originArray) {
+                let temp = []
+                if (originArray) {
+                    temp = originArray.slice()
+				}
+                if (this.showNone) {
+                    temp.splice(0, 1, defaultNoneArea())
+                }
+				return temp
+			},
             pickerChange(e) {
                 let self = this
                 let changePickerValue = e.mp.detail.value;
@@ -195,7 +214,7 @@
                 let self = this
                 let proviceStorage = uni.getStorageSync('area_province')
                 if (proviceStorage){
-                    self.province = proviceStorage
+                    self.province = self.dealWithShowNone(proviceStorage)
 
                     if(success && typeof success == 'function'){
                         success()
@@ -207,7 +226,7 @@
                     t: new Date().getTime()
                 }).then(function (r) {
                     let content = r.data.data.content
-                    self.province = content
+                    self.province = self.dealWithShowNone(content)
                     if(success && typeof success == 'function'){
                         success()
                     }
@@ -217,15 +236,23 @@
             },
             loadCity: function (parentId,success){
                 let self = this
-                //检查缓存
-                let cityStorage = uni.getStorageSync('area_city' + parentId)
-                if (cityStorage) {
-                    self.city = cityStorage
+                if (parentId === defaultNoneAreaId) {
+                    self.city = self.dealWithShowNone()
                     if(success && typeof success == 'function'){
                         success()
                     }
                     return
                 }
+                //检查缓存
+                let cityStorage = uni.getStorageSync('area_city' + parentId)
+                if (cityStorage) {
+                    self.city = self.dealWithShowNone(cityStorage)
+                    if(success && typeof success == 'function'){
+                        success()
+                    }
+                    return
+                }
+
                 self.$http.get('/base/areas', {
                     type: 'city',
                     parentId: parentId,
@@ -234,7 +261,7 @@
                     let content = r.data.data.content
 
                     if (content) {
-                        self.city = content
+                        self.city = self.dealWithShowNone(content)
                         if(success && typeof success == 'function'){
                             success()
                         }
@@ -246,11 +273,17 @@
             loadDistrict: function (parentId,success){
 
                 let self = this
-
+                if (parentId === defaultNoneAreaId) {
+                    self.district = self.dealWithShowNone()
+                    if(success && typeof success == 'function'){
+                        success()
+                    }
+                    return
+                }
                 //检查缓存
                 let districtStorage = uni.getStorageSync('area_district' + parentId)
                 if (districtStorage) {
-                    self.district = districtStorage
+                    self.district = self.dealWithShowNone(districtStorage)
                     if(success && typeof success == 'function'){
                         success()
                     }
@@ -264,7 +297,7 @@
                 }).then(function (r) {
                     let content = r.data.data.content
                     if (content) {
-                        self.district = content
+                        self.district = self.dealWithShowNone(content)
                         if(success && typeof success == 'function'){
                             success()
                         }
