@@ -1,5 +1,6 @@
 import config from '@/config/config.js'
 import utils from '@/utils/utils.js'
+import store from '@/store/index.js'
 import { getMsg } from '@/utils/httpReponseCode.js'
 /**
  * 定义一下不提示消息的对象
@@ -344,8 +345,10 @@ export function getRegExpByType (type) {
 export function getCurrentUserinfo () {
     return new Promise((resolve, reject) => {
         get('/base/user/current',{t: new Date().getTime() + Math.random()}).then(response => {
+            store.commit('setUserinfo',response.data.data.content)
             resolve(response.data.data.content)
         }).catch(err => {
+            store.commit('removeUserinfo')
             reject(err)
         })
     })
@@ -368,6 +371,58 @@ export function hasLogin () {
         })
     })
 }
+/**
+ * 页面访问记录
+ * @param data = {
+ *     url:'',
+ *     type:'',
+ *     contentId:'',
+ *     contentName:'',
+ *     whereFrom:''
+ * }
+ */
+
+export function pageViewRecord (data) {
+
+    if (!data.whereFrom) {
+        let from = utils.getUrlParam(window.location.href,'from')
+        console.log(from)
+        let fromStr = '正常访问'
+        if (from) {
+            if ('timeline' == from) {
+                fromStr = '朋友圈'
+            }else if ('groupmessage' == from) {
+                fromStr = '微信群'
+            }else if ('singlemessage' == from) {
+                fromStr = '微信朋友'
+            }else {
+                fromStr = from
+            }
+        }
+        data.whereFrom = fromStr
+    }
+    if (!data.url) {
+        data.url = window.location.href
+    }
+    data.fromUserId = utils.getUrlParam(window.location.href,'f_u')
+    post('/statistic/page/view',data)
+}
+/**
+ * 页面分享记录
+ * @param data = {
+ *     url:'',
+ *     type:'',
+ *     contentId:'',
+ *     contentName:'',
+ *     shareTo:''
+ * }
+ */
+export function pageShareRecord (data) {
+    if (!data.url) {
+        data.url = window.location.href
+    }
+    post('/statistic/page/view',data)
+}
 const http = {
     get: get,
     post: post,
@@ -381,6 +436,8 @@ const http = {
     getRegExpByType: getRegExpByType,
     getCurrentUserinfo: getCurrentUserinfo,
     uploadFile: uploadFile,
-    hasLogin: hasLogin
+    hasLogin: hasLogin,
+    pageViewRecord: pageViewRecord,
+    pageShareRecord: pageShareRecord
 }
 export default http

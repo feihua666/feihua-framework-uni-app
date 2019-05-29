@@ -135,6 +135,27 @@ const concatUrlParam = function(url,param){
     }
     return url
 }
+// 拼接url hash参数
+const concatUrlHashParam = function(url,param){
+    let strParam = objToParam(param)
+    if(url && strParam) {
+        let r = ''
+        let urlArray = url.split('#')
+        if (urlArray.length > 1) {
+            let _url = urlArray[1]
+            if(_url.indexOf('?') != -1){
+                r += _url + '&' + strParam
+            }else {
+                r += _url + '?' + strParam
+            }
+            if(urlArray.length >1){
+                r = urlArray[0] + '#' + r
+            }
+            return r
+        }
+    }
+    return url
+}
 const getUrlParam = function (url, name) {
     //构造一个含有目标参数的正则表达式对象
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
@@ -161,6 +182,7 @@ export default {
     dGetValue: dGetValue,
     isWeixn: isWeixn,
     concatUrlParam: concatUrlParam,
+    concatUrlHashParam: concatUrlHashParam,
     getUrlParam: getUrlParam
 
 }

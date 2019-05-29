@@ -82,13 +82,11 @@
             },
             wxLoginAuto(){
                 let self = this
+                uni.removeStorage({key:'wxLogin'});
                 this.$http.post('/login',this.wxLoginForm).then(function () {
-                    // 完成后清除
-                    uni.removeStorage({key:'wxLogin'});
+
                     self.loginSuccess()
                 }).catch(function () {
-                    // 完成后清除
-                    uni.removeStorage({key:'wxLogin'});
                     uni.showToast({
                         title:'登录失败',
                         icon:'none'
