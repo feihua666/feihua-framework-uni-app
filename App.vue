@@ -2,19 +2,55 @@
 	export default {
 		onLaunch: async function () {
             console.log('App Launch')
+            // 单页面应用在历史模式下，微信分享的签名url只能是第一次的url这里记录一下以待签名使用
+            window.entryUrl = window.location.href
         },
 		onShow: function () {
             console.log('App Show')
-            this.$http.hasLogin().then(function () {
-            }).catch(function () {
-                let hash = window.location.hash
-                if(hash && hash.substring(1).indexOf('/pages') == 0 && hash.substring(1) != '/pages/login/login'){
-                    uni.setStorageSync('navigateToPage',hash.substring(1))
-                    uni.reLaunch({
-                        url:'/pages/index/index'
-                    })
-                }
-            })
+            let self = this
+
+            let splashShowed = this.$storageUtils.getSync('splashShowed')
+            if(!splashShowed){
+                uni.reLaunch({
+                    url:'/pages/splash/splash'
+                })
+            }else{
+                this.$http.hasLogin().then(function () {
+                }).catch(function () {
+                    // 如果没有登录，记录入口页面，登录成功后导航到入口页面，具体导航操作在登录页面执行
+                    let hash = window.location.href.replace(self.$config.hostContext,'')
+                    // 登录成功后要跳转的地址
+                    let afterLoginPage = ''
+                    if(hash && hash.indexOf('/pages') == 0){
+                        if (hash.indexOf('/pages/login/login') != 0) {
+                            afterLoginPage = hash
+                        }
+                    }else {
+                        // 这里没有给afterLoginPage赋值，是因为第一次访问的url没有找到，系统会自动跳转到index页面，不需处理
+                        hash = '/pages/index/index'
+                    }
+                    // 不需要登录的页面配置
+                    let noLoginPages = self.$config.noLoginPages
+                    let needLogin = true
+                    for (let i = 0; i < noLoginPages.length; i++) {
+                        if (hash.indexOf(noLoginPages[i]) == 0){
+                            needLogin = false
+                            break
+                        }
+                    }
+                    // 如果需要登录，记录一下登录后要跳转的地址
+                    if (needLogin) {
+                        if (afterLoginPage) {
+                            uni.setStorageSync('navigateToPage',afterLoginPage)
+                        }
+                        console.log('needLogin=' + needLogin)
+                        uni.reLaunch({
+                            url:'/pages/login/login'
+                        })
+                    }
+                })
+            }
+
 		},
 		onHide: function () {
 			console.log('App Hide')

@@ -94,9 +94,13 @@
                         }
                     });
                 });
+                let realUrl = window.location.href
+				if (self.$utils.browser.versions.ios){
+				    realUrl = window.entryUrl
+				}
                 let p = {
                     which: self.$config.which,
-                    realUrl: (window.location.href.split('#')[0])
+                    realUrl: (realUrl.split('#')[0])
                 }
                 self.$http.get('/publicplatform/getJsInterfaceConfig',p)
                     .then(function (res) {

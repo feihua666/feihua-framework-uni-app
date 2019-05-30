@@ -37,7 +37,7 @@
                 loginLoading:false,
 				form: {
 				  loginType: 'ACCOUNT',
-				  loginClient: this.$config.loginClient,
+                    client: this.$config.client,
 				  principal: '',
 				  password: '',
 				  captcha: '',
@@ -45,8 +45,9 @@
 				},
                 wxLoginForm:{
                     loginType: 'WX_PLATFORM',
-                    loginClient: this.$config.loginClient,
+                    client: this.$config.client,
                     type:this.$config.which,
+                    openid: '',
                     rememberMe: false
                 },
             }
@@ -80,18 +81,39 @@
                     self.loginLoading = false
                 })
             },
-            wxLoginAuto(){
+            wxLogin(){
                 let self = this
-                uni.removeStorage({key:'wxLogin'});
-                this.$http.post('/login',this.wxLoginForm).then(function () {
-
-                    self.loginSuccess()
+                let p = {
+                    code: this.$utils.getUrlParam(null,'code')|| ''
+                }
+                if (!p.code) {
+                    return
+                }
+                uni.showLoading({
+                    title: ''
+                });
+                console.log('wxlogin')
+                self.$http.post('/publicplatform/authUserInfo/' + self.$config.which +'/' + self.$config.client,p).then(function (res) {
+                    let openid = res.data.data.content
+                    self.wxLoginForm.openid = openid
+                    self.$http.post('/login',self.wxLoginForm).then(function () {
+                        uni.hideLoading();
+                        self.loginSuccess()
+                    }).catch(function (res) {
+                        uni.hideLoading();
+                        uni.showToast({
+                            title:'微信登录失败',
+                            icon:'none'
+                        })
+                    })
                 }).catch(function () {
+                    uni.hideLoading();
                     uni.showToast({
-                        title:'登录失败',
+                        title:'获取微信用户信息失败',
                         icon:'none'
                     })
                 })
+
             },
             // 登录成功调用,用于初始化基础数据
             loginSuccess(){
@@ -100,16 +122,11 @@
                     icon: 'none',
                     duration:1000
                 });
-                let pages = getCurrentPages();
-                if(pages && pages.length > 1){
-                    uni.navigateBack({
-                        delta: 1
-                    });
-                }else{
-                    uni.reLaunch({
-                        url:'/pages/index/index'
-                    })
-                }
+                //  登录成功之后跳转到首页，首页会有页面跳转逻辑，
+                //  注意注意注意！！！这里为什么没有直接跳转到登录前的页面，因为会有问题，这里如果直接跳转到登录前的页面，后退就又是登录页面了，如果用relunch会没有的返回按钮，很尴尬
+                uni.reLaunch({
+                    url:'/pages/index/index'
+                })
             },
             checkLoginForm(){
                 let rule = [
@@ -120,14 +137,14 @@
                 return checkRes
             },
             wxLoginBtnClick(){
+                uni.removeStorageSync('wxLoginAuto')
                 let self = this
                 self.$http.get('/publicplatform/authAuthorizePageUrl/' + self.$config.which,{
                     scope:'snsapi_userinfo',
                     state:'STATE',
-                    redirectUrl:self.$config.hostApi + '/publicplatform/getAuthUserInfo/'+ self.$config.which +'?redirectUrl=' + self.$config.host + '/uni-app'
+                    redirectUrl:self.$config.hostContext + '/pages/login/login'
                 }).then(function (res) {
                     let url = res.data.data.content
-                    uni.setStorageSync('wxLogin',true)
                     window.location.href = url
                 })
             }
@@ -137,17 +154,7 @@
         onLoad(options) {
             console.log('onLoad login')
             let self = this
-            this.$http.hasLogin()
-                .then(function (res) {
-                    //已登录
-                })
-                .catch(function () {
-                //微信登录
-                if (uni.getStorageSync('wxLogin')) {
-                    self.wxLoginAuto()
-                }
-            })
-
+            this.wxLogin()
         }
     }
 </script>
