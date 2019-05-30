@@ -19,30 +19,24 @@
                 }).catch(function () {
                     // 总之一句话，用户没有登录，需要登录的页面跳转到登录，不需要登录的页面不处理，登录成功后跳转到index页面
                     // 如果没有登录，记录入口页面，登录成功后导航到入口页面，具体导航操作在登录页面执行
-                    let hash = window.location.href.replace(self.$config.hostContext,'')
-                    // 登录成功后要跳转的地址
-                    let afterLoginPage = ''
-                    if(hash && hash.indexOf('/pages') == 0){
-                        if (hash.indexOf('/pages/login/login') != 0) {
-                            afterLoginPage = hash
-                        }
-                    }else {
-                        // 这里没有给afterLoginPage赋值，是因为第一次访问的url没有找到，系统会自动跳转到index页面，不需处理
-                        hash = '/pages/index/index'
+                    let page = window.location.href.replace(self.$config.hostContext,'')
+                    let realPage = page
+                    if (!realPage || realPage == '/') {
+                        realPage = '/pages/index/index'
                     }
-                    // 不需要登录的页面配置
+                    /// 不需要登录的页面配置
                     let noLoginPages = self.$config.noLoginPages
                     let needLogin = true
                     for (let i = 0; i < noLoginPages.length; i++) {
-                        if (hash.indexOf(noLoginPages[i]) == 0){
+                        if (realPage.indexOf(noLoginPages[i]) == 0){
                             needLogin = false
                             break
                         }
                     }
                     // 如果需要登录，记录一下登录后要跳转的地址
                     if (needLogin) {
-                        if (afterLoginPage) {
-                            uni.setStorageSync('navigateToPage',afterLoginPage)
+                        if (page && page.indexOf('/pages') == 0) {
+                            uni.setStorageSync('navigateToPage',page)
                         }
                         console.log('needLogin=' + needLogin)
                         uni.reLaunch({
