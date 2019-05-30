@@ -6,7 +6,8 @@ import config from '@/config/config.js'
 import utils from '@/utils/utils.js'
 import bus from '@/utils/eventBus.js'
 import storageUtils from '@/utils/storageUtils.js'
-
+import fhLoginHelper from '@/fh-components/fh-login-helper.vue'
+Vue.component('fhLoginHelper',fhLoginHelper)
 Vue.config.productionTip = false
 
 Vue.prototype.$store = store

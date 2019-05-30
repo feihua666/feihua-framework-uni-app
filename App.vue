@@ -17,6 +17,7 @@
             }else{
                 this.$http.hasLogin().then(function () {
                 }).catch(function () {
+                    // 总之一句话，用户没有登录，需要登录的页面跳转到登录，不需要登录的页面不处理，登录成功后跳转到index页面
                     // 如果没有登录，记录入口页面，登录成功后导航到入口页面，具体导航操作在登录页面执行
                     let hash = window.location.href.replace(self.$config.hostContext,'')
                     // 登录成功后要跳转的地址
