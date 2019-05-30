@@ -108,6 +108,7 @@
                 let page = uni.getStorageSync('navigateToPage')
                 uni.removeStorageSync('navigateToPage')
                 if(page){
+                    console.log('navigateToPage=' + page);
                     this.$utils.n.ngt(page)
                 }
             }
