@@ -423,6 +423,34 @@ export function pageShareRecord (data) {
     }
     post('/statistic/page/view',data)
 }
+
+/**
+ * 是否有权限
+ * @returns {Promise<any>}
+ */
+let cacheFunction = {}
+export function hasFunctionPermissionByCode (code) {
+    let promise = new Promise((resolve, reject) => {
+        if (code) {
+            if (cacheFunction[code]) {
+                resolve(cacheFunction[code])
+            } else {
+                get('/base/functionResources', {
+                    code: code, t: new Date().getTime() + Math.random()
+                }).then(response => {
+                    let content = response.data.data.content
+                    cacheFunction[code] = content
+                    resolve(content)
+                }).catch(err => {
+                    reject(err)
+                })
+            }
+        } else {
+            reject(new Error('code is null'))
+        }
+    })
+    return promise
+}
 const http = {
     get: get,
     post: post,
@@ -438,6 +466,7 @@ const http = {
     uploadFile: uploadFile,
     hasLogin: hasLogin,
     pageViewRecord: pageViewRecord,
-    pageShareRecord: pageShareRecord
+    pageShareRecord: pageShareRecord,
+    hasPermission: hasFunctionPermissionByCode
 }
 export default http
